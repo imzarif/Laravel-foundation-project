@@ -1,0 +1,273 @@
+/* Theme custom new styles */
+/*Loader css*/
+body{
+    position: relative;
+}
+.loader {   
+    display: none;
+    z-index: 9999;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+    background-color: rgba(0,0,0,0.3);
+}
+.loader .content{
+    text-align: center;
+    margin-top:calc(100vh - 50vh);
+}
+.loader .loader-text {
+    background: red;
+    padding: 6px 15px;
+    border-radius: 50px;
+    color: #fff;
+}
+
+/*End Loader*/
+.input-note{
+    font-size: 10px;
+    color: #666264;
+    margin-top: 3px!important;
+    margin: 0px;
+}
+.file-view-link {
+    text-decoration: none !important;
+}
+fieldset:disabled .btn-file-view {
+  pointer-events: all !important;
+  opacity: 1 !important;
+}
+.btn-file-view {
+    padding-left: 0px;
+    padding-bottom: 0px;
+}
+.btn-file-view i{
+    font-size: inherit !important;
+}
+.profile-status {
+    background-color: #ff009d08;
+    padding: 15px 10px 10px;
+    border: 1px solid #e6d7d7;
+    box-shadow: 1px 1px 1px 1px #efecec;
+}
+
+.input-error {
+    color: red;
+    margin-top: 10px;
+    margin-bottom: 0px;
+}
+
+.select2 .select2-container {
+    width: 100% !important;
+}
+
+.select2-search__field {
+    padding-left: 5px;
+    height: 40px;
+}
+.select2-container--default .select2-selection--single {
+    height: 40px !important;
+    border-radius: 0px !important;
+    padding-top: 4px !important;
+    border: 1px solid #e1dddd!important;
+
+}
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 36px!important;
+}
+
+.mr-5 {
+    margin-right: 5px;
+}
+
+.submit-input-box {
+    padding: 10px 10px 0;
+    border: 1px solid rgba(225, 221, 221, 0.65);
+}
+
+.btn-filter-input-inline {
+    margin-top: 29px;
+}
+
+.bg-view-form {
+    padding: 10px;
+    background-color: rgb(242 242 242 / 65%);
+}
+
+table td {
+    color: #08113b !important;
+}
+
+.mr-5 {
+    margin-right: 5px;
+}
+
+.brand-logo {
+    height: 50px;
+}
+
+.brand-logo img {
+    max-height: 100%;
+}
+
+@media (min-width: 992px) {
+    .table-view-page td:first-child {
+        width: 25%;
+    }
+}
+
+.table-view-page td:first-child {
+    font-weight: 500;
+    color: #000000a6;
+}
+
+.table-view-page td {
+    padding: 8px 10px;
+    border: 0px !important;
+    font-size: 0.91rem !important;
+    line-height: 1.5;
+}
+
+.grid-filter-box {
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin-bottom: 15px;
+    position: relative;
+}
+
+.grid-filter-box .export-form {
+    position: absolute;
+    right: 15px;
+    bottom: 12px;
+    font-size: 13px;
+    color: #535252;
+}
+
+.btn:focus,
+a:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+.table-striped thead {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+table.table-bordred td,
+table.table-bordred th {
+    border: 1px solid #eee !important;
+}
+
+.pagination> :first-child,
+.pagination> :last-child {
+    font-weight: bold;
+}
+
+.file-input {
+    padding: 12px 5px;
+}
+
+.btn-composite {
+    font-size: 13px;
+    padding: 7px 5px 5px 5px;
+    line-height: 1;
+    /* border: 1px solid; */
+    /* background: #cedebe4a; */
+}
+
+.btn1 {
+    background: #f642428a;
+    border: 1px solid #d52f2f;
+}
+
+.btn2 {
+    background: #a71313d9;
+    border: 1px solid;
+}
+
+.btn3 {
+    background: #f642428a;
+    border: 1px solid #d52f2f;
+}
+
+.btn-composite .mdi {
+    font-size: 13px;
+}
+
+.basic_concept_form p>strong {
+    font-weight: 500;
+}
+
+.btn-task-add-sm {
+    padding: 5px;
+    background-color: #fff;
+    font-size: 13px;
+}
+
+/*Custom Modal*/
+
+.modal {
+    display: none;
+    /* Hidden by default */
+    position: fixed;
+    /* Stay in place */
+    z-index: 1;
+    /* Sit on top */
+    padding-top: 100px;
+    /* Location of the box */
+    left: 0;
+    top: 0;
+    width: 100%;
+    /* Full width */
+    height: 100%;
+    /* Full height */
+    overflow: auto;
+    /* Enable scroll if needed */
+    background-color: rgb(0, 0, 0);
+    /* Fallback color */
+    background-color: rgba(0, 0, 0, 0.4);
+    /* Black w/ opacity */
+}
+
+/* Modal Content */
+.modal-content {
+    background-color: #fefefe;
+    margin: auto;
+    border: 1px solid #888;
+    width: 400px;
+    min-height: 200px;
+}
+
+/* The Close Button */
+.close {
+    color: red;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.label-description {
+    margin-top: -0.75rem;
+    font-weight: 400;
+    color: #a799a0;
+
+}
+
+.label-description-nodiv {
+    margin-top: -0.25rem;
+    font-weight: 400;
+    color: #a799a0;
+
+}
+
+.error{
+    color: #e13133;
+    margin-top: 10px;
+}

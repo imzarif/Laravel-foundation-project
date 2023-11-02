@@ -1,0 +1,42 @@
+FROM php:8.1-fpm
+
+ENV TZ=Asia/Dhaka
+
+RUN sed -i s/http/https/g /etc/apt/sources.list && apt-get update
+
+RUN apt-get install -y --no-install-recommends wget \
+            cron \
+            git \
+            libaio-dev \
+            libpng-dev \
+            libjpeg-dev \
+            libwebp-dev \
+            libfreetype6-dev \
+            libzip-dev \
+            nano \
+            nginx \
+            supervisor \
+            libxml2-dev \
+            sudo &&\
+    apt-get clean && \
+    pecl install redis && \
+    docker-php-ext-configure gd && \
+    docker-php-ext-install zip pdo pdo_mysql soap gd && \
+    docker-php-ext-enable redis && \
+    php -r "readfile('https://getcomposer.org/installer');" | php -- --install-dir=/usr/bin/ --filename=composer && \
+    ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
+    echo $TZ > /etc/timezone && \
+    #increase post_max_size limit
+    sed -i 's/post_max_size =.*/post_max_size = 35M/g' /usr/local/etc/php/php.ini-production && \
+    sed -i 's/upload_max_filesize =.*/upload_max_filesize = 32M/g' /usr/local/etc/php/php.ini-production && \
+    cp /usr/local/etc/php/php.ini-production /usr/local/etc/php/php.ini && \
+    wget https://github.com/elastic/apm-agent-php/releases/download/v1.5/apm-agent-php_1.5_all.deb && \
+    dpkg -i apm-agent-php_1.5_all.deb && \
+    rm apm-agent-php_1.5_all.deb && \
+    rm /etc/nginx/sites-enabled/*
+
+COPY ./docker/nginx.conf /etc/nginx/conf.d/default.conf
+COPY ./docker/supervisord.conf /etc/supervisord.conf
+
+EXPOSE 80
+ENTRYPOINT ["supervisord", "--configuration", "/etc/supervisord.conf"]

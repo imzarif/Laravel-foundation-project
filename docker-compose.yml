@@ -1,0 +1,22 @@
+version: '3'
+
+services:
+  vas-cp:
+    image: vas-cp
+    ports:
+      - 8000:8000
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    restart: unless-stopped
+
+  db:
+    image: mariadb:latest
+    ports:
+      - 3306:3306
+    restart: unless-stopped
+    environment:
+      - MYSQL_DATABASE=vascp
+      - MYSQL_USER=vascp_user
+      - MYSQL_PASSWORD=vascp_1234
+      - MARIADB_ALLOW_EMPTY_ROOT_PASSWORD=true

@@ -1,0 +1,93 @@
+workflow:
+  rules:
+  - if: $CI_COMMIT_BRANCH == "develop"
+  - if: $CI_COMMIT_BRANCH == "staging"
+  - if: $CI_COMMIT_BRANCH == "main"
+
+stages:
+- build
+- scan
+- deploy
+
+build-base:
+  stage: build
+  script:
+  - docker login -u $CONTAINERD_USERNAME -p $CONTAINERD_PASSWORD registry.robi.com.bd
+  - docker build . -f Dockerfile.base -t registry.robi.com.bd/robiworkflow/vas-cp:base --no-cache
+  - docker push registry.robi.com.bd/robiworkflow/vas-cp:base
+
+build-app:
+  stage: build
+  script:
+  - docker login -u $CONTAINERD_USERNAME -p $CONTAINERD_PASSWORD registry.robi.com.bd
+  - docker build . -t registry.robi.com.bd/robiworkflow/vas-cp:$CI_COMMIT_SHA --no-cache
+  - docker push registry.robi.com.bd/robiworkflow/vas-cp:$CI_COMMIT_SHA
+  needs:
+  - build-base
+
+scan-sonar:
+  stage: scan
+  script:
+  - curl -s -u "$SONAR_TOKEN:" $SONAR_HOST_URL/api/projects/create -d project=$CI_PROJECT_NAME -d name=$CI_PROJECT_NAME
+  - export SONAR_SCANNER_OPTS="-Dsonar.projectKey=$CI_PROJECT_NAME -Dsonar.qualitygate.wait=true -Dsonar.qualitygate.timeout=600"
+  - sonar-scanner
+  allow_failure: true
+  only:
+    - 'main'
+    - 'staging'
+
+scan-trivy:
+  stage: scan
+  script:
+  - trivy image registry.robi.com.bd/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME:$CI_COMMIT_SHORT_SHA
+  allow_failure: true
+  only:
+  - 'main'
+
+
+deploy:
+  stage: deploy
+  script:
+  - helm repo update
+  - helm upgrade --install vas-cp robi/vas-cp --set images.vas-cp=$CI_COMMIT_SHA --reuse-values
+  - kubectl --context $HELM_KUBECONTEXT --namespace $HELM_NAMESPACE rollout status deploy vas-cp-app -w
+  rules:
+  - if: $CI_COMMIT_BRANCH == "develop"
+    variables:
+      HELM_KUBECONTEXT: generic-staging
+      HELM_NAMESPACE: vas-cp-test
+    when: always
+  - if: $CI_COMMIT_BRANCH == "staging"
+    variables:
+      HELM_KUBECONTEXT: generic-staging
+      HELM_NAMESPACE: vas-cp-staging
+    when: always
+  - if: $CI_COMMIT_BRANCH == "main"
+    variables:
+      HELM_KUBECONTEXT: generic-production
+      HELM_NAMESPACE: vas-cp-production
+    when: manual
+
+migrate:
+  stage: deploy
+  script:
+  - export POD=`kubectl --context $HELM_KUBECONTEXT --namespace $HELM_NAMESPACE get pod -l app=vas-cp-app --sort-by=.metadata.creationTimestamp -o jsonpath="{.items[-1].metadata.name}"`
+  - kubectl --context $HELM_KUBECONTEXT --namespace $HELM_NAMESPACE exec $POD -- php artisan migrate --force --no-interaction
+  needs:
+  - deploy
+  rules:
+  - if: $CI_COMMIT_BRANCH == "develop"
+    variables:
+      HELM_KUBECONTEXT: generic-staging
+      HELM_NAMESPACE: vas-cp-test
+    when: always
+  - if: $CI_COMMIT_BRANCH == "staging"
+    variables:
+      HELM_KUBECONTEXT: generic-staging
+      HELM_NAMESPACE: vas-cp-staging
+    when: always
+  - if: $CI_COMMIT_BRANCH == "main"
+    variables:
+      HELM_KUBECONTEXT: generic-production
+      HELM_NAMESPACE: vas-cp-production
+    when: manual
